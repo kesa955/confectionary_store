@@ -8,20 +8,19 @@ public class login extends owner_Login implements ActionListener {
     private static JFrame frame;
     //private static JButton customer_Button;
 	public static void main(String[] args) {
-		
-		
-            		
+
 		// TODO Auto-generated method stub
         frame = new JFrame();
         JPanel panel = new JPanel();
-        //frame.setSize(400, 400);
         frame.setBounds(500, 200, 500, 150);
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         
+        
+        //Owner Button
         owner_Button = new JButton("Login as Owner");
         owner_Button.setBounds(200, 50, 80, 25);
         panel.add(owner_Button);
+        
         owner_Button.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		owner_Login obj1 = new owner_Login();
@@ -31,8 +30,10 @@ public class login extends owner_Login implements ActionListener {
         
         owner_Button.addActionListener(e -> {
 			   frame.dispose();
-			});
+		});
         
+  
+        //Customer Button
         customer_Button = new JButton("Login as Customer");
         customer_Button.setBounds(300, 100, 80, 25);
         panel.add(customer_Button);
@@ -53,8 +54,5 @@ public class login extends owner_Login implements ActionListener {
         
         
 	}
-	
-	
-	
-	
+
 }

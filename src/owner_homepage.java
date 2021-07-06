@@ -13,30 +13,46 @@ import java.sql.Statement;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 
 public class owner_homepage extends owner_Login implements ActionListener{
-
+	DefaultTableModel model;
+	JTable table;
+    owner_homepage(){
+    	owner_Button.addActionListener(e->{
+    		frame.dispose();
+    	});
+    }
 	public void o_homepage() {
 		// TODO Auto-generated method stub
-		JFrame frame = new JFrame();
-    	JTable table = new JTable();
+		
+		JFrame frame1 = new JFrame();
+    	table = new JTable();
     	JPanel panel = new JPanel();
     	
+    	JTextField jtf = new JTextField(500);
+    	JLabel search1 = new JLabel("Search: ");
+    	JButton search2 = new JButton("Find");
+    	
+        frame1.add(panel); 
+        
     	// create a table model and set a Column Identifiers to this model 
         Object[] columns = {"Item Id","Item Name","Item Price","Quantity"};
-        DefaultTableModel model = new DefaultTableModel();
+        model = new DefaultTableModel();
         model.setColumnIdentifiers(columns);
         
         //setting model to the table
         table.setModel(model);
-    	
-        table.setBackground(Color.LIGHT_GRAY);
-        table.setForeground(Color.black);
+        frame1.setTitle("Menu");
+
+        table.setBackground(Color.WHITE);
+        table.setForeground(Color.BLACK);
         Font font = new Font("",1,22);
         table.setFont(font);
         table.setRowHeight(30);
+        table.setBounds(100, 100, 10000, 10000);
         
     	JLabel id_Label = new JLabel("Item Id: ");
     	JLabel item_name_Label = new JLabel("Item Name: ");
@@ -66,25 +82,25 @@ public class owner_homepage extends owner_Login implements ActionListener{
     	btn_update.setBounds(350, 265, 100, 25);
     	btn_delete.setBounds(350, 310, 100, 25);
     	
-    	frame.add(id_field);
-    	frame.add(item_name_field);
-    	frame.add(item_price_field);
-    	frame.add(item_quantity_field);
+    	frame1.add(id_field);
+    	frame1.add(item_name_field);
+    	frame1.add(item_price_field);
+    	frame1.add(item_quantity_field);
     	
-    	frame.add(id_Label);
-    	frame.add(item_name_Label);
-    	frame.add(item_price_Label);
-    	frame.add(item_quantity_Label);
+    	frame1.add(id_Label);
+    	frame1.add(item_name_Label);
+    	frame1.add(item_price_Label);
+    	frame1.add(item_quantity_Label);
     	
     	JScrollPane pane = new JScrollPane(table);
     	pane.setBounds(0, 0, 880, 200);
     	
-    	frame.add(pane);
+    	frame1.add(pane);
     	
-    	frame.add(btn_add);
-    	frame.add(btn_update);
-    	frame.add(btn_delete);
-    	
+    	frame1.add(btn_add);
+    	frame1.add(btn_update);
+    	frame1.add(btn_delete);
+
     	// create an array of objects to set the row data
         Object[] row = new Object[4];
         
@@ -94,7 +110,6 @@ public class owner_homepage extends owner_Login implements ActionListener{
 					"root", "password@123");
 			Statement st = connection.createStatement(); 
 			PreparedStatement pst = connection.prepareStatement("select * from menu");
-			System.out.println(pst);
             ResultSet rs = pst.executeQuery();
             
             while(rs.next()) {
@@ -143,10 +158,12 @@ public class owner_homepage extends owner_Login implements ActionListener{
 	                		System.out.println("Error");
 	                		
 	                		if(row[0].toString().equals("") || row[1].toString().equals("") || row[2].toString().equals("") || row[3].toString().equals("")) {
-	                			JOptionPane.showMessageDialog(panel, "Fill the empty field");
+	                			JOptionPane.showMessageDialog(frame1, "Fill the empty field");
+	                			
 	                        }
+	                		
 	                		else {
-	                		JOptionPane.showMessageDialog(panel, "Already existing Id");
+	                		JOptionPane.showMessageDialog(frame1, "Already existing Id");
 	                		}
 	                	}
                 	}
@@ -162,8 +179,6 @@ public class owner_homepage extends owner_Login implements ActionListener{
         
             );
         
-        
-        
         // button deleting of row
         btn_delete.addActionListener(new ActionListener(){
 
@@ -171,6 +186,7 @@ public class owner_homepage extends owner_Login implements ActionListener{
             
                 // i = the index of the selected row
                 int i = table.getSelectedRow();
+                
                 try {
             		Class.forName("com.mysql.jdbc.Driver");
 					connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/project?autoReconnect=true&useSSL=false",
@@ -188,7 +204,7 @@ public class owner_homepage extends owner_Login implements ActionListener{
 					}
                 }
                 else{
-                	JOptionPane.showMessageDialog(panel, "Select a cell to delete the row");
+                	JOptionPane.showMessageDialog(frame1, "Select a cell to delete the row");
                 }
                 }
                 catch (ClassNotFoundException e1) {
@@ -197,11 +213,9 @@ public class owner_homepage extends owner_Login implements ActionListener{
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}
-                
+				} 
             }
         });
-        
         
         // get selected row data From table to textfields 
         table.addMouseListener(new MouseAdapter(){
@@ -219,7 +233,6 @@ public class owner_homepage extends owner_Login implements ActionListener{
             }
         });
         
-        
         // button update row
         btn_update.addActionListener(new ActionListener(){
 
@@ -235,7 +248,6 @@ public class owner_homepage extends owner_Login implements ActionListener{
                 if(i >= 0) 
                 {  
                 	
-                	
                    model.setValueAt(id_field.getText(), i, 0);
                    model.setValueAt(item_name_field.getText(), i, 1);
                    model.setValueAt(item_price_field.getText(), i, 2);
@@ -249,32 +261,53 @@ public class owner_homepage extends owner_Login implements ActionListener{
                  st.executeUpdate("update menu set id='"+val1+"',item_name='"+val2+"',item_price='"+val3+"',item_quantity='"+val4+"' where id='"+val1+"'");
                 }
                 else{
-                    System.out.println("Update Error");
+                    JOptionPane.showMessageDialog(frame1, "Select a cell to update");
                 }
                 }
                 catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
+				}
+                catch (SQLException e1) {
 					e1.printStackTrace();
 				}
             }
         });
-    	
-    	frame.setLayout(null);
-    	
-    	frame.setSize(900,500);
-    	frame.setLocationRelativeTo(null);
-    	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	frame.setVisible(true);
         
-	
+        JLabel note = new JLabel("NOTE: To Update or Delete the cells you need to select them first ");
+        note.setBounds(10, 410, 700, 25);
+        
+        search1.setBounds(550, 410, 100, 25);
+    	jtf.setBounds(600, 410, 150, 25);
+    	search2.setBounds(750,410,100,25);	
+    	
+        frame1.add(search2);
+        frame1.add(search1);
+        frame1.add(jtf);
+        frame1.add(note);
+   
+        search2.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				model = (DefaultTableModel) table.getModel();
+				TableRowSorter<DefaultTableModel> ts = new TableRowSorter<DefaultTableModel>(model);
+				table.setRowSorter(ts);
+				ts.setRowFilter(RowFilter.regexFilter(jtf.getText().trim()));
+				
+			}
+        });
+
+    	frame1.setLayout(null);
+    	
+    	frame1.setSize(900,500);
+    	frame1.setLocationRelativeTo(null);
+    	frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	frame1.setVisible(true);
+        
 	}
-	@Override
+	 
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 
 }
