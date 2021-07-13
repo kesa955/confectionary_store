@@ -101,8 +101,10 @@ public class owner_homepage extends owner_Login implements ActionListener{
     	frame1.add(btn_update);
     	frame1.add(btn_delete);
 
+    	Object[] row = new Object[4];
+    	
     	// create an array of objects to set the row data
-        Object[] row = new Object[4];
+        
         
         try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -130,7 +132,9 @@ public class owner_homepage extends owner_Login implements ActionListener{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-        
+      
+    	
+    	
         //button adding of row
         btn_add.addActionListener(new ActionListener(){
         	
