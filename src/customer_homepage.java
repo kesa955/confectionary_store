@@ -1,4 +1,3 @@
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -22,27 +21,26 @@ public class customer_homepage implements ActionListener{
 	DefaultTableModel model;
 	JTable table;
 	JFrame frame1;
+	protected static int menu_val;
 	protected static String name;
     protected static String number;
     protected static int val;
-    
+    static int d=1;
 	public void menu() {
 		// TODO Auto-generated method stub
 		
-		if (val==1) {
-			    JOptionPane.showMessageDialog(frame1, "Existing Customer");
+		if (val==1 && d==1) {
+			    JOptionPane.showMessageDialog(frame1, "Welcome Back!!!!");
+			    d=d+1;
 		}
-		else if(val==0) {
-		      JOptionPane.showMessageDialog(frame1, "New Customer");	
+		else if(val==0 && d==1) {
+		      JOptionPane.showMessageDialog(frame1, "Hello!! Welcome to Confectionary Store");	
+		      d=d+1;
 		}
 		
 		JFrame frame1 = new JFrame();
     	table = new JTable();
     	JPanel panel = new JPanel();
-    	
-    	JTextField jtf = new JTextField(500);
-    	JLabel search1 = new JLabel("Search: ");
-    	JButton search2 = new JButton("Find");
     	
         frame1.add(panel); 
         
@@ -74,7 +72,7 @@ public class customer_homepage implements ActionListener{
     	
     	
     	JButton btn_update = new JButton("Add Item To Cart");
-    
+    	JButton btn_cart = new JButton("View Cart");
     	
     	id_field.setBounds(120,220, 150, 25);
     	item_name_field.setBounds(120,250, 150, 25);
@@ -86,9 +84,11 @@ public class customer_homepage implements ActionListener{
     	item_price_Label.setBounds(20,280, 100, 25);
     	item_quantity_Label.setBounds(20,310, 100, 25);
     	
+    	JButton clear = new JButton("Clear");
     	
-    	btn_update.setBounds(350, 265, 100, 25);
-    
+    	btn_update.setBounds(350, 265, 200, 25);
+    	btn_cart.setBounds(650, 265, 100, 25);
+    	clear.setBounds(140, 360, 100, 25);
     	
     	frame1.add(id_field);
     	frame1.add(item_name_field);
@@ -105,7 +105,9 @@ public class customer_homepage implements ActionListener{
     	
     	frame1.add(pane);
     	frame1.add(btn_update);
-
+    	frame1.add(btn_cart);
+        frame1.add(clear);
+    	
     	Object[] row = new Object[4];
     	
     	// create an array of objects to set the row data
@@ -129,6 +131,7 @@ public class customer_homepage implements ActionListener{
                 model.addRow(new Object[]{id, name, price, quantity});
                 
             }
+            
         }
         catch (ClassNotFoundException e1) {
 			// TODO Auto-generated catch block
@@ -137,10 +140,13 @@ public class customer_homepage implements ActionListener{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-      
+ 
+        id_field.setEditable(false);
+        item_name_field.setEditable(false);
+    	item_price_field.setEditable(false);
+    	//JTextField item_quantity_field 
     	
     	
-       
         
         // get selected row data From table to textfields 
         table.addMouseListener(new MouseAdapter(){
@@ -162,7 +168,7 @@ public class customer_homepage implements ActionListener{
         // button update row
         btn_update.addActionListener(new ActionListener(){
 
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {          	
              
             	int v=0;
                 // i = the index of the selected row
@@ -172,72 +178,90 @@ public class customer_homepage implements ActionListener{
 					Connection connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/project?autoReconnect=true&useSSL=false",
 							"root", "password@123");
             	   Statement st = connection.createStatement();
+            	  
                 if(i >= 0) 
                 {  
-                	ResultSet rs = st.executeQuery("select * from menu where id = '"+id_field.getText()+"'");
-                	rs.next();
-                	int a = rs.getInt("item_quantity");
+                	ResultSet rs4 = st.executeQuery("select * from menu where id = '"+id_field.getText()+"'");
+                   	rs4.next();
+                   	menu_val = rs4.getInt("item_quantity");
                 	int b = Integer.parseInt(item_quantity_field.getText());
-                	String x = String.valueOf(a-b);
-                   model.setValueAt(id_field.getText(), i, 0);
-                   model.setValueAt(item_name_field.getText(), i, 1);
-                   model.setValueAt(item_price_field.getText(), i, 2);
-                   model.setValueAt(x, i, 3);
-
+                  
                 String val1 = (String) table.getValueAt(i, 0); 
                	String val2 = (String) table.getValueAt(i, 1);
                	String val3 = (String) table.getValueAt(i, 2);
                	String val4 = (String) table.getValueAt(i, 3);
                	
-               	ResultSet rs1 = st.executeQuery("select * from cart where phone = '"+number+"'");
-               	if(rs1.next()) {
-               		while(rs1.next()) {
-               		System.out.println(rs1.getString("item_name"));
-               		System.out.println(val2);
-               		System.out.println(number);
-               		if (rs1.getString("item_name").equals(val2) && rs1.getString("phone").equals(number)) {
-               			System.out.println("Hi");
-               			String sql2 = "update cart set item_quantity= item_quantity + '"+b+"' where phone='"+number+"'";
-                       	st.executeUpdate(sql2);
-               		}
-               		else {
-               			System.out.println(val1+" " +val2 + " "+val3 + " "+val4);
-                       	String sql1 = "insert into cart values('"+number+"','"+val2+"','"+val3+"','"+item_quantity_field.getText()+"')";
+               	
+              	if(menu_val>=b) {
+              		
+              		String x = String.valueOf(menu_val-b);
+                    model.setValueAt(id_field.getText(), i, 0);
+                    model.setValueAt(item_name_field.getText(), i, 1);
+                    model.setValueAt(item_price_field.getText(), i, 2);
+                    model.setValueAt(x, i, 3);
+                    
+              		String sql = "update menu set item_quantity= item_quantity - '"+b+"' where item_name ='"+val2+"'";
+                    st.executeUpdate(sql);	
+                    if(val==1) {
+                   		ResultSet rs1 = st.executeQuery("select * from cart where phone = '"+number+"'");
+                   		while(rs1.next()) { 	
+                   		if (rs1.getString("item_name").equals(val2)) {
+                   			String sql2 = "update cart set item_quantity= item_quantity + '"+b+"' where item_name ='"+val2+"'";
+                           	st.executeUpdate(sql2);
+                   		}
+                   		
+                   		}
+                   		String sql1 = "insert into cart values('"+number+"','"+val2+"','"+val3+"','"+item_quantity_field.getText()+"')";
                        	st.executeUpdate(sql1);
-               		}
-               		}
-               	}
-               	else {
-               		String sql1 = "insert into cart values('"+number+"','"+val2+"','"+val3+"','"+item_quantity_field.getText()+"')";
-                   	st.executeUpdate(sql1);
-               	}
+                   	}
+                   	else {
+                   		String sql1 = "insert into cart values('"+number+"','"+val2+"','"+val3+"','"+item_quantity_field.getText()+"')";
+                       	st.executeUpdate(sql1);
+                       	val=1;
+                   	}
+              	}
+              	else {
+                    JOptionPane.showMessageDialog(frame1, "We are running out of Stock!! Choose another quantity you need");
+
+              	}
                	
-               	
-               	/*
-               	System.out.println(val1+" " +val2 + " "+val3 + " "+val4);
-               	String sql1 = "insert into cart values('"+val1+"','"+val2+"','"+val3+"','"+val4+"')";
-               	st.executeUpdate(sql1);
-            	*/
                 }
                 else{
                     JOptionPane.showMessageDialog(frame1, "Select a cell to update");
                 }
+                
                 }
                 catch (ClassNotFoundException e1) {
 					e1.printStackTrace();
 				}
                 catch (SQLException e1) {
-					e1.printStackTrace();
+					//e1.printStackTrace();
 				}
+                
             }
+            
+        });
+        
+        btn_cart.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent e) {   
+        		customer_cart obj = new customer_cart();
+        		obj.view_cart();
+        		
+        	}
         });
         
         
-        
-  
-       
-   
+        clear.addActionListener(new ActionListener(){
 
+            public void actionPerformed(ActionEvent e) {          	
+            id_field.setText("");
+            item_name_field.setText("");
+            item_price_field.setText("");
+            item_quantity_field.setText("");
+            }
+            
+            });
+ 
     	frame1.setLayout(null);
     	
     	frame1.setSize(900,500);
@@ -252,4 +276,3 @@ public class customer_homepage implements ActionListener{
 	}
 
 }
-

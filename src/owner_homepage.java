@@ -228,7 +228,8 @@ public class owner_homepage extends owner_Login implements ActionListener{
             
                 // i = the index of the selected row
                 int i = table.getSelectedRow();
-            
+                String name1 = model.getValueAt(i, 1).toString();
+                
                 id_field.setText(model.getValueAt(i, 0).toString());
                 item_name_field.setText(model.getValueAt(i, 1).toString());
                 item_price_field.setText(model.getValueAt(i, 2).toString());
@@ -284,8 +285,8 @@ public class owner_homepage extends owner_Login implements ActionListener{
     	jtf.setBounds(600, 410, 150, 25);
     	search2.setBounds(750,410,100,25);	
     	
-        frame1.add(search2);
-        frame1.add(search1);
+        //frame1.add(search2);
+        //frame1.add(search1);
         frame1.add(jtf);
         frame1.add(note);
    
