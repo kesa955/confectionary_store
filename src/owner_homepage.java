@@ -33,8 +33,7 @@ public class owner_homepage extends owner_Login implements ActionListener{
     	JPanel panel = new JPanel();
     	
     	JTextField jtf = new JTextField(500);
-    	JLabel search1 = new JLabel("Search: ");
-    	JButton search2 = new JButton("Find");
+    	
     	
         frame1.add(panel); 
         
@@ -82,11 +81,15 @@ public class owner_homepage extends owner_Login implements ActionListener{
     	btn_update.setBounds(350, 265, 100, 25);
     	btn_delete.setBounds(350, 310, 100, 25);
     	
+        JButton clear = new JButton("Clear");
+
+    	clear.setBounds(140, 360, 100, 25);
+    	
     	frame1.add(id_field);
     	frame1.add(item_name_field);
     	frame1.add(item_price_field);
     	frame1.add(item_quantity_field);
-    	
+    	frame1.add(clear);
     	frame1.add(id_Label);
     	frame1.add(item_name_Label);
     	frame1.add(item_price_Label);
@@ -281,26 +284,21 @@ public class owner_homepage extends owner_Login implements ActionListener{
         JLabel note = new JLabel("NOTE: To Update or Delete the cells you need to select them first ");
         note.setBounds(10, 410, 700, 25);
         
-        search1.setBounds(550, 410, 100, 25);
-    	jtf.setBounds(600, 410, 150, 25);
-    	search2.setBounds(750,410,100,25);	
+        clear.addActionListener(new ActionListener(){
+
+            public void actionPerformed(ActionEvent e) {          	
+            id_field.setText("");
+            item_name_field.setText("");
+            item_price_field.setText("");
+            item_quantity_field.setText("");
+            }
+            
+            });
     	
-        //frame1.add(search2);
-        //frame1.add(search1);
-        frame1.add(jtf);
+        
         frame1.add(note);
    
-        search2.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				model = (DefaultTableModel) table.getModel();
-				TableRowSorter<DefaultTableModel> ts = new TableRowSorter<DefaultTableModel>(model);
-				table.setRowSorter(ts);
-				ts.setRowFilter(RowFilter.regexFilter(jtf.getText().trim()));
-				
-			}
-        });
+    
 
     	frame1.setLayout(null);
     	
